@@ -2,6 +2,8 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Menu, X, BookOpen, Users, Calendar, Image, Newspaper, Mail, Shield } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
+import { useAuth } from "@/hooks/useAuth";
+import UserMenu from "@/components/auth/UserMenu";
 
 const navigation = [
   { name: "Home", href: "/", icon: BookOpen },
@@ -15,6 +17,7 @@ const navigation = [
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const location = useLocation();
+  const { user } = useAuth();
 
   return (
     <header className="bg-background/95 backdrop-blur-md border-b border-border/50 sticky top-0 z-50">
@@ -59,13 +62,17 @@ export default function Header() {
           ))}
         </div>
 
-        <div className="hidden lg:flex lg:flex-1 lg:justify-end">
-          <Link to="/admin">
-            <Button variant="outline" size="sm" className="border-primary text-primary hover:bg-primary hover:text-white">
-              <Shield className="h-4 w-4 mr-2" />
-              Admin
-            </Button>
-          </Link>
+        <div className="hidden lg:flex lg:flex-1 lg:justify-end lg:items-center lg:space-x-4">
+          {user ? (
+            <UserMenu />
+          ) : (
+            <Link to="/auth">
+              <Button variant="outline" size="sm" className="border-primary text-primary hover:bg-primary hover:text-white">
+                <Shield className="h-4 w-4 mr-2" />
+                Sign In
+              </Button>
+            </Link>
+          )}
         </div>
       </nav>
 
@@ -106,14 +113,22 @@ export default function Header() {
                       <span>{item.name}</span>
                     </Link>
                   ))}
-                  <Link
-                    to="/admin"
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="flex items-center space-x-3 px-4 py-3 rounded-lg text-base font-medium text-primary hover:bg-primary/5 border-t border-border/50 mt-4 pt-6"
-                  >
-                    <Shield className="h-5 w-5" />
-                    <span>Admin Panel</span>
-                  </Link>
+                  {user ? (
+                    <div className="border-t border-border/50 mt-4 pt-6">
+                      <div className="px-4 py-3">
+                        <UserMenu />
+                      </div>
+                    </div>
+                  ) : (
+                    <Link
+                      to="/auth"
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="flex items-center space-x-3 px-4 py-3 rounded-lg text-base font-medium text-primary hover:bg-primary/5 border-t border-border/50 mt-4 pt-6"
+                    >
+                      <Shield className="h-5 w-5" />
+                      <span>Sign In</span>
+                    </Link>
+                  )}
                 </div>
               </div>
             </div>
